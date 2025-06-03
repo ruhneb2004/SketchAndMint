@@ -1,0 +1,20 @@
+<svg width="600" height="300" viewBox="0 0 600 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rough-style border -->
+  <rect x="10" y="10" width="580" height="280" rx="20" stroke="#4a5568" stroke-width="2" stroke-dasharray="6 4" fill="none"/>
+  
+  <!-- Sketchy text -->
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Comic Sans MS, cursive, sans-serif"
+        font-size="48" fill="#2c5282">
+    Sketch Mint
+  </text>
+
+  <!-- Mint icon (simple sketch-like mint leaf) -->
+  <g transform="translate(460, 200) scale(1.4)">
+    <path d="M10 20 C20 10, 30 10, 40 20 C30 30, 20 30, 10 20 Z"
+          fill="#b9fbc0" stroke="#2f855a" stroke-width="1.5"/>
+    <path d="M25 15 L25 25" stroke="#2f855a" stroke-width="1"/>
+    <path d="M20 17 L30 23" stroke="#2f855a" stroke-width="1"/>
+    <path d="M30 17 L20 23" stroke="#2f855a" stroke-width="1"/>
+  </g>
+</svg>
