@@ -9,7 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^1.3.0",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slider": "^1.3.5",
+    "@rainbow-me/rainbowkit": "^2.2.5",
+    "@tanstack/react-query": "^5.80.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.511.0",
@@ -18,9 +23,12 @@
     "react-colorful": "^5.6.1",
     "react-dom": "^19.0.0",
     "roughjs": "^4.6.6",
+    "sharp": "^0.34.2",
     "svgo": "^3.3.2",
     "svgo-browser": "^1.3.8",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "viem": "^2.30.6",
+    "wagmi": "^2.15.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -16,6 +16,8 @@ import { CrossHatch } from "@/images/crossHatch";
 import { Solid } from "@/images/solid";
 import { NoStyle } from "@/images/noStyle";
 import { Hachure } from "@/images/hachure";
+import { MintButton } from "@/components/ui/mintButton";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 type ShapeType = {
   type: string;
@@ -331,7 +333,7 @@ export const DrawingPage = () => {
     };
   }, [isDrawing, tool]);
 
-  function exportToSvg() {
+  async function exportToSvg(): Promise<string> {
     const svgContent = shapes
       .map((shape) => {
         const attrs = Object.entries(shape.attr)
@@ -341,9 +343,9 @@ export const DrawingPage = () => {
       })
       .join("\n");
 
-    const fullSvgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="5000" height="4000"><rect width="100%" height="100%" fill="white" />${svgContent}</svg>`;
+    const fullSvgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgRef.current?.clientWidth}" height="${svgRef.current?.clientHeight}"><rect width="100%" height="100%" fill="white" />${svgContent}</svg>`;
     console.log(fullSvgContent);
-    navigator.clipboard.writeText(fullSvgContent);
+    await navigator.clipboard.writeText(fullSvgContent);
     return fullSvgContent;
   }
 
@@ -386,7 +388,7 @@ export const DrawingPage = () => {
     }
     console.log("compressesd svg ", compressedSvg.data);
     navigator.clipboard.writeText(compressedSvg.data);
-    return fullSvgContent;
+    return compressedSvg.data;
   }
 
   function eraseDrawing(option: string) {
@@ -426,101 +428,106 @@ export const DrawingPage = () => {
   return (
     <div className="relative flex items-center justify-center">
       {/* This is the customization menu */}
-      <div className="flex h-fit flex-col bg-sky-200 w-64 p-4 rounded-lg shadow-md fixed text-sky-900 top-8 left-8 z-50 space-y-4">
-        {/* Things to add!
+      <div className="flex h-fit flex-col  w-64  fixed top-8 left-8 z-50 space-y-4">
+        <div className=" flex ">
+          <ConnectButton accountStatus={"avatar"} />
+        </div>
+        <div className="h-fit bg-sky-200 w-64 p-4 rounded-lg shadow-md text-sky-900">
+          {/* Things to add!
         1. Stroke Width
         2. Storke Color
         3. Fill Color (transparent and other colors, maybe a color wheel perhaps!)
         4. Fill Style
         */}
-        <div className="flex flex-col space-y-2">
-          <span className="text-sm">Stroke Width</span>
-          <Slider
-            max={20}
-            min={0.5}
-            defaultValue={[10]}
-            onValueChange={setStrokeWidth}
-            className=""
-          />
-        </div>
-        <div>
-          <span className="text-sm">Pick Stroke Color</span>
-          <div
-            className={`w-[80%] h-7 rounded-md shadow-sm shadow-gray-400   relative cursor-pointer transition-all`}
-            style={{ backgroundColor: strokeColor }}
-            onClick={() => setOpenStrokeColorPicker(!openStrokeColorPicker)}
-          ></div>
-          {openStrokeColorPicker && (
-            <div
-              className="absolute z-50 "
-              ref={(el) => {
-                colorRefArray.current[0] = el;
-              }}
-            >
-              <HexColorPicker color={strokeColor} onChange={setStrokeColor} />
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col space-y-2">
-          <span className="text-sm">Fill Style</span>
-          <div className="flex items-center  space-x-2">
-            {fillStyles.map((style, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setFillStyleId(idx);
-                  selectFillStyle(style.value);
-                  console.log(fillStyle);
-                }}
-                className={` w-fit active:shadow-none rounded-md p-1.5 shadow-sm shadow-gray-400  transition-all active:bg-sky-700 hover:bg-sky-700 ${
-                  fillStyleId === idx ? "bg-sky-800" : "bg-white"
-                }`}
-              >
-                {style.icon}
-              </button>
-            ))}
+          <div className="flex flex-col space-y-2">
+            <span className="text-sm">Stroke Width</span>
+            <Slider
+              max={20}
+              min={0.5}
+              defaultValue={[10]}
+              onValueChange={setStrokeWidth}
+              className=""
+            />
           </div>
-        </div>
-        <div>
-          <span className="text-sm">Pick Fill Color</span>
-          <div
-            className={`w-[80%] h-7 rounded-md shadow-sm shadow-gray-400   relative cursor-pointer transition-all`}
-            style={{ backgroundColor: fillColor }}
-            onClick={() => setOpenFillColorPicker(!openFillColorPicker)}
-          ></div>
-          {openFillColorPicker && (
+          <div>
+            <span className="text-sm">Pick Stroke Color</span>
             <div
-              className="absolute z-50"
-              ref={(el) => {
-                colorRefArray.current[1] = el;
-              }}
-            >
-              <HexColorPicker color={fillColor} onChange={setFillColor} />
+              className={`w-[80%] h-7 rounded-md shadow-sm shadow-gray-400   relative cursor-pointer transition-all`}
+              style={{ backgroundColor: strokeColor }}
+              onClick={() => setOpenStrokeColorPicker(!openStrokeColorPicker)}
+            ></div>
+            {openStrokeColorPicker && (
+              <div
+                className="absolute z-50 "
+                ref={(el) => {
+                  colorRefArray.current[0] = el;
+                }}
+              >
+                <HexColorPicker color={strokeColor} onChange={setStrokeColor} />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-2">
+            <span className="text-sm">Fill Style</span>
+            <div className="flex items-center  space-x-2">
+              {fillStyles.map((style, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setFillStyleId(idx);
+                    selectFillStyle(style.value);
+                    console.log(fillStyle);
+                  }}
+                  className={` w-fit active:shadow-none rounded-md p-1.5 shadow-sm shadow-gray-400  transition-all active:bg-sky-700 hover:bg-sky-700 ${
+                    fillStyleId === idx ? "bg-sky-800" : "bg-white"
+                  }`}
+                >
+                  {style.icon}
+                </button>
+              ))}
             </div>
-          )}
-        </div>
-        <div>
-          <span className="text-sm">Background Color</span>
-          <div
-            className={`w-[80%] h-7 rounded-md shadow-sm shadow-gray-400 relative cursor-pointer transition-all`}
-            style={{ backgroundColor: backgroundColor }}
-            onClick={() =>
-              setOpenBackgroundColorPicker(!openBackgroundColorPicker)
-            }
-          ></div>
-          {openBackgroundColorPicker && (
+          </div>
+          <div>
+            <span className="text-sm">Pick Fill Color</span>
             <div
-              className="absolute z-50"
-              ref={(el) => {
-                colorRefArray.current[2] = el;
-              }}
-            >
-              <HexColorPicker
-                color={backgroundColor}
-                onChange={setBackgroundColor}
-              />
-            </div>
-          )}
+              className={`w-[80%] h-7 rounded-md shadow-sm shadow-gray-400   relative cursor-pointer transition-all`}
+              style={{ backgroundColor: fillColor }}
+              onClick={() => setOpenFillColorPicker(!openFillColorPicker)}
+            ></div>
+            {openFillColorPicker && (
+              <div
+                className="absolute z-50"
+                ref={(el) => {
+                  colorRefArray.current[1] = el;
+                }}
+              >
+                <HexColorPicker color={fillColor} onChange={setFillColor} />
+              </div>
+            )}
+          </div>
+          <div>
+            <span className="text-sm">Background Color</span>
+            <div
+              className={`w-[80%] h-7 rounded-md shadow-sm shadow-gray-400 relative cursor-pointer transition-all`}
+              style={{ backgroundColor: backgroundColor }}
+              onClick={() =>
+                setOpenBackgroundColorPicker(!openBackgroundColorPicker)
+              }
+            ></div>
+            {openBackgroundColorPicker && (
+              <div
+                className="absolute z-50"
+                ref={(el) => {
+                  colorRefArray.current[2] = el;
+                }}
+              >
+                <HexColorPicker
+                  color={backgroundColor}
+                  onChange={setBackgroundColor}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="fixed top-5 right-10 text-[1.1rem] font-[500] font-sans  tracking-widest text-neutral-400 select-none">
@@ -528,30 +535,38 @@ export const DrawingPage = () => {
       </div>
       <svg
         ref={svgRef}
-        width={500}
-        height={500}
         style={{ backgroundColor }}
-        className="h-screen  w-full border border-gray-300  cursor-crosshair "
+        className="h-screen w-full border border-gray-300  cursor-crosshair "
       />
 
       {/* main menu bar is this */}
-      <div className="fixed  left-1/2 bottom-8 -translate-x-1/2 flex items-center justify-center bg-sky-200 text-sky-800 p-2 rounded-lg shadow-md z-50 space-x-2">
-        {buttons.map((btn, idx) => (
-          <button
-            key={idx}
-            className={`${
-              selectButtonId === idx
-                ? "bg-sky-900 shadow-sm shadow-gray-600 text-white"
-                : ""
-            } hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm p-1.5 text-xs`}
-            onClick={() => {
-              btn.onClick();
-              if (idx < 4) setSelectButtonId(idx);
-            }}
-          >
-            {btn.icon || btn.label}
-          </button>
-        ))}
+
+      <div className="fixed left-1/2 bottom-8 -translate-x-1/2 flex items-center justify-center gap-3">
+        <div className=" bg-sky-200 text-sky-800 p-2 rounded-lg shadow-md z-50 space-x-2 items-center flex">
+          {buttons.map((btn, idx) => (
+            <button
+              key={idx}
+              className={`${
+                selectButtonId === idx
+                  ? "bg-sky-900 shadow-sm shadow-gray-600 text-white"
+                  : ""
+              } hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm p-1.5 text-xs`}
+              onClick={() => {
+                btn.onClick();
+                if (idx < 4) setSelectButtonId(idx);
+              }}
+            >
+              {btn.icon || btn.label}
+            </button>
+          ))}
+        </div>
+        <div className=" bg-sky-200 h-full w-fit text-sky-800 p-2.5 rounded-lg shadow-md z-50 space-x-2 items-center flex">
+          <MintButton
+            className="px-1.5 py-4  text-xs h-8 flex items-center justify-center hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm"
+            exportToSvgRaw={exportToSvgRaw}
+            exportToSvg={exportToSvg}
+          />
+        </div>
       </div>
     </div>
   );
