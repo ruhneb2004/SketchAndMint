@@ -1,4 +1,4 @@
-import { DrawingPage } from "@/pages/DrawingPage";
+import DrawingPage from "@/pages/DrawingPage";
 
 export default function Home() {
   return (

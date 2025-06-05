@@ -28,7 +28,7 @@ type ShapeType = {
   attr: Record<string, string | number>;
 };
 
-export const DrawingPage = () => {
+const DrawingPage = () => {
   const [strokeWidth, setStrokeWidth] = useState([10]);
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [fillStyle, selectFillStyle] = useState("hachure");
@@ -613,3 +613,5 @@ export const DrawingPage = () => {
     </div>
   );
 };
+
+export default DrawingPage;
