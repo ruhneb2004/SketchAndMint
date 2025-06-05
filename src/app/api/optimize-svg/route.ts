@@ -1,5 +1,3 @@
-import { optimize } from "svgo";
-
 export async function POST(request: Request) {
   const { svg } = await request.json();
 
@@ -11,6 +9,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    const { optimize } = await import("svgo");
     const result = optimize(svg, {
       multipass: true,
       plugins: [

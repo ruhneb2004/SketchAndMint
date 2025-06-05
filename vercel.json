@@ -1,6 +1,0 @@
-{
-  "build": {
-    "ignoreCommand": "echo 'Skipping build for Solidity files'"
-  },
-  "ignoreFiles": ["src/contract/**"]
-}

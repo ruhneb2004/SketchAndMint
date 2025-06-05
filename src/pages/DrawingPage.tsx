@@ -25,7 +25,7 @@ import { abi, contractAddr } from "@/library/contractConfig";
 import { AnimatePresence, motion } from "framer-motion";
 type ShapeType = {
   type: string;
-  attr: Record<string, any>;
+  attr: Record<string, string | number>;
 };
 
 export const DrawingPage = () => {
