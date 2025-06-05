@@ -31,20 +31,30 @@ export async function POST(request: Request) {
     { text: prompt },
   ];
 
-  const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
-    contents: contents,
-  });
-  console.log(response);
-
-  if (response?.candidates && response.candidates[0]?.content) {
-    return new Response(JSON.stringify(response.candidates[0].content), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: contents,
     });
-  } else {
+
+    if (response?.candidates && response.candidates[0]?.content) {
+      return new Response(JSON.stringify(response.candidates[0].content), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      return new Response(
+        JSON.stringify({ error: "AI response is missing candidates." }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Error generating AI content:", error);
     return new Response(
-      JSON.stringify({ error: "AI response is missing candidates." }),
+      JSON.stringify({ error: "Failed to generate AI content." }),
       {
         status: 500,
         headers: { "Content-Type": "application/json" },

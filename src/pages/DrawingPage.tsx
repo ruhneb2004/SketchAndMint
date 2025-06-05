@@ -10,6 +10,7 @@ import { PencilIcon } from "@/images/pencil";
 import { RectangleIcon } from "@/images/rectangle";
 import { UndoIcon } from "@/images/undo";
 import { useRef, useState, useEffect } from "react";
+import { useWatchContractEvent } from "wagmi";
 import rough from "roughjs/bin/rough";
 import { HexColorPicker } from "react-colorful";
 import { CrossHatch } from "@/images/crossHatch";
@@ -18,7 +19,10 @@ import { NoStyle } from "@/images/noStyle";
 import { Hachure } from "@/images/hachure";
 import { MintButton } from "@/components/ui/mintButton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import { abi, contractAddr } from "@/library/contractConfig";
+import { AnimatePresence, motion } from "framer-motion";
 type ShapeType = {
   type: string;
   attr: Record<string, any>;
@@ -30,6 +34,7 @@ export const DrawingPage = () => {
   const [fillStyle, selectFillStyle] = useState("hachure");
   const [openStrokeColorPicker, setOpenStrokeColorPicker] = useState(false);
   const [openFillColorPicker, setOpenFillColorPicker] = useState(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [openBackgroundColorPicker, setOpenBackgroundColorPicker] =
     useState(false);
   const colorRefArray = useRef<(HTMLDivElement | null)[]>([]);
@@ -85,6 +90,19 @@ export const DrawingPage = () => {
     { label: "Compressed", onClick: exportToSvg },
     { label: "Raw", onClick: exportToSvgRaw },
   ];
+
+  useWatchContractEvent({
+    address: contractAddr,
+    abi,
+    eventName: "SonthamNft__NftMinted",
+    onLogs(logs) {
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+      console.log(logs);
+    },
+  });
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -427,6 +445,30 @@ export const DrawingPage = () => {
 
   return (
     <div className="relative flex items-center justify-center">
+      {showAlert ? (
+        <AnimatePresence>
+          {showAlert && (
+            <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+              className="absolute top-10 w-[50%] z-[100]"
+            >
+              <Alert variant="success">
+                <Terminal />
+                <AlertTitle>NFT Minted 🎉</AlertTitle>
+                <AlertDescription>
+                  Your NFT has been successfully minted! Check your wallet to
+                  see it.
+                </AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      ) : (
+        <div></div>
+      )}
       {/* This is the customization menu */}
       <div className="flex h-fit flex-col  w-64  fixed top-8 left-8 z-50 space-y-4">
         <div className=" flex ">
