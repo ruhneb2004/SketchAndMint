@@ -1,4 +1,4 @@
-import DrawingPage from "@/pagesComp/DrawingPage";
+import DrawingPage from "@/pagesComp/DrawingComp";
 
 export default function Home() {
   return (
