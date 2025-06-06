@@ -186,7 +186,7 @@ export const MintButton = ({
                           MintCompressedSvg
                         </button>
                         <button
-                          disabled={true}
+                          disabled={!isConnected}
                           className={`text-sm text-sky-900 py-2 px-4 rounded-md shadow-gray-400 shadow-sm bg-sky-200 focus:outline-none ${
                             !isConnected
                               ? "disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
