@@ -121,22 +121,29 @@ const DrawingPage = () => {
     const svg = svgRef.current;
     const rc = rough.svg(svg);
 
-    const getMousePosition = (evt: MouseEvent) => {
+    const getMousePosition = (evt: MouseEvent | TouchEvent) => {
       const rect = svg.getBoundingClientRect();
+      if ("touches" in evt) {
+        return {
+          x: evt.touches[0].clientX - rect.left,
+          y: evt.touches[0].clientY - rect.top,
+        };
+      }
       return {
         x: evt.clientX - rect.left,
         y: evt.clientY - rect.top,
       };
     };
 
-    const handleMouseDown = (evt: MouseEvent) => {
+    const handleMouseDown = (evt: MouseEvent | TouchEvent) => {
       setIsDrawing(true);
       const pos = getMousePosition(evt);
       startPointRef.current = pos;
       if (tool == "freehand") pointsRef.current = [pos];
     };
 
-    const handleMouseMove = (evt: MouseEvent) => {
+    const handleMouseMove = (evt: MouseEvent | TouchEvent) => {
+      evt.preventDefault();
       if (!isDrawing) return;
       const pos = getMousePosition(evt);
       switch (tool) {
@@ -355,7 +362,15 @@ const DrawingPage = () => {
     svg.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
 
+    svg.addEventListener("touchstart", handleMouseDown, { passive: false });
+    svg.addEventListener("touchmove", handleMouseMove, { passive: false });
+    window.addEventListener("touchend", handleMouseUp, { passive: false });
+
     return () => {
+      svg.removeEventListener("touchstart", handleMouseDown);
+      svg.removeEventListener("touchmove", handleMouseMove);
+      window.removeEventListener("touchend", handleMouseUp);
+
       svg.removeEventListener("mousedown", handleMouseDown);
       svg.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
