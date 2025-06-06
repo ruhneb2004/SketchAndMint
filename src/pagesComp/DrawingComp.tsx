@@ -654,11 +654,17 @@ const DrawingPage = () => {
           ))}
         </div>
         <div className=" bg-sky-200 h-full w-fit text-sky-800 p-2.5 rounded-lg shadow-md z-50 space-x-2 items-center flex">
-          <MintButton
-            className="px-1.5 py-4  text-xs h-8 flex items-center justify-center hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm cursor-pointer"
-            exportToSvgRaw={exportToSvgRaw}
-            exportToSvg={exportToSvg}
-          />
+          <div
+            onClick={() => {
+              console.log("name");
+            }}
+          >
+            <MintButton
+              className="px-1.5 py-4  text-xs h-8 flex items-center justify-center hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm cursor-pointer"
+              exportToSvgRaw={exportToSvgRaw}
+              exportToSvg={exportToSvg}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { Label } from "./label";
 import { Input } from "./input";
-import { usePublicClient, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { AnimatePresence, motion } from "framer-motion";
 import { abi, contractAddr } from "@/library/contractConfig";
 
@@ -34,6 +34,7 @@ export const MintButton = ({
   const [compressedSvgData, setCompressedSvgData] = useState<string | null>(
     null
   );
+  const { isConnected } = useAccount();
 
   const mintSvg = async (svgData: string) => {
     setLoading(true);
@@ -43,6 +44,11 @@ export const MintButton = ({
     const encoded = btoa(svgData);
     console.log("encoded", encoded);
 
+    if (!isConnected) {
+      console.error("Wallet not connected");
+      setLoading(false);
+      return;
+    }
     try {
       const scoreStringArr = await aiScore(svgData);
       const scoreArr = JSON.parse(scoreStringArr);
@@ -139,7 +145,7 @@ export const MintButton = ({
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="username-1">Svg Desctiption</Label>
+                <Label htmlFor="username-1">Svg Description</Label>
                 <Input
                   id="username-1"
                   name="username"
@@ -160,18 +166,38 @@ export const MintButton = ({
                       layout: { duration: 1, ease: [0.4, 0, 0.2, 1] },
                     }}
                   >
-                    <button
-                      className="text-sm text-sky-900 py-2 px-4 rounded-md shadow-gray-400 shadow-sm bg-sky-200 focus:outline-none active:bg-sky-100 active:shadow-none transition-all"
-                      onClick={() => mintSvg(compressedSvgData || "")}
-                    >
-                      MintCompressedSvg
-                    </button>
-                    <button
-                      className="text-sm text-sky-900 py-2 px-4 rounded-md shadow-gray-400 shadow-sm bg-sky-200 focus:outline-none active:bg-sky-100 active:shadow-none transition-all"
-                      onClick={() => mintSvg(svg || "")}
-                    >
-                      MintSvg
-                    </button>
+                    <div className="flex flex-col gap-2">
+                      {!isConnected && (
+                        <span className="text-[13px] text-center text-red-500">
+                          why you not connect wallet? 🤔
+                        </span>
+                      )}
+
+                      <div className="flex gap-3">
+                        <button
+                          disabled={!isConnected}
+                          className={`text-sm text-sky-900 py-2 px-4 rounded-md shadow-gray-400 shadow-sm bg-sky-200 focus:outline-none ${
+                            !isConnected
+                              ? "disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                              : "active:bg-sky-100 active:shadow-none transition-all"
+                          }`}
+                          onClick={() => mintSvg(compressedSvgData || "")}
+                        >
+                          MintCompressedSvg
+                        </button>
+                        <button
+                          disabled={true}
+                          className={`text-sm text-sky-900 py-2 px-4 rounded-md shadow-gray-400 shadow-sm bg-sky-200 focus:outline-none ${
+                            !isConnected
+                              ? "disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                              : "active:bg-sky-100 active:shadow-none transition-all"
+                          }`}
+                          onClick={() => mintSvg(svg || "")}
+                        >
+                          MintSvg
+                        </button>
+                      </div>
+                    </div>
                   </motion.div>
                 ) : (
                   <motion.div
