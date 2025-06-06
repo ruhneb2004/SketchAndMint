@@ -45,6 +45,7 @@ const DrawingPage = () => {
   const colorRefArray = useRef<(HTMLDivElement | null)[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
   const pointsRef = useRef<{ x: number; y: number }[]>([]);
+  const [windowWidth, setWindowWidth] = useState(0);
   const tempPathRef = useRef<SVGElement | null>(null);
   const [strokeColor, setStrokeColor] = useState("#000000");
   const [fillColor, setFillColor] = useState("#000000");
@@ -461,6 +462,13 @@ const DrawingPage = () => {
       setOpenBackgroundColorPicker(false);
     }
   };
+  //can't use the window.innerWidth cause it will cause hydration issues. DAMN YOU NEXTJS or someone who is responsible for this! Most probably it will be me ;(
+  useEffect(() => {
+    const updateWidth = () => setWindowWidth(window.innerWidth);
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -626,45 +634,41 @@ const DrawingPage = () => {
       {/* main menu bar is this */}
 
       <div className="fixed left-1/2 bottom-8 -translate-x-1/2 flex items-center justify-center gap-3">
-        <div className=" bg-sky-200 text-sky-800 p-2 rounded-lg shadow-md z-50 space-x-2 items-center flex">
-          {buttons.map((btn, idx) => (
-            <Tooltip key={idx}>
-              <TooltipTrigger asChild>
-                <button
-                  key={idx}
-                  className={`${
-                    selectButtonId === idx
-                      ? "bg-sky-900 shadow-sm shadow-gray-600 text-white"
-                      : ""
-                  } hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm p-1.5 text-xs ${
-                    btn.icon ? "cursor-pointer" : "cursor-copy"
-                  }`}
-                  onClick={() => {
-                    btn.onClick();
-                    if (idx < 4) setSelectButtonId(idx);
-                  }}
-                >
-                  {btn.icon || btn.label}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{btn.icon ? btn.label : `Copy ${btn.label} svg`}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
+        <div className="bg-sky-200 text-sky-800 p-2 rounded-lg shadow-md z-50 space-x-2 items-center flex">
+          {buttons.map((btn, idx) =>
+            windowWidth < 520 && idx > 5 ? null : (
+              <Tooltip key={idx}>
+                <TooltipTrigger asChild>
+                  <button
+                    key={idx}
+                    className={`${
+                      selectButtonId === idx
+                        ? "bg-sky-900 shadow-sm shadow-gray-600 text-white"
+                        : ""
+                    } hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm p-1.5 text-xs ${
+                      btn.icon ? "cursor-pointer" : "cursor-copy"
+                    }`}
+                    onClick={() => {
+                      btn.onClick();
+                      if (idx < 4) setSelectButtonId(idx);
+                    }}
+                  >
+                    {btn.icon || btn.label}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{btn.icon ? btn.label : `Copy ${btn.label} svg`}</p>
+                </TooltipContent>
+              </Tooltip>
+            )
+          )}
         </div>
         <div className=" bg-sky-200 h-full w-fit text-sky-800 p-2.5 rounded-lg shadow-md z-50 space-x-2 items-center flex">
-          <div
-            onClick={() => {
-              console.log("name");
-            }}
-          >
-            <MintButton
-              className="px-1.5 py-4  text-xs h-8 flex items-center justify-center hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm cursor-pointer"
-              exportToSvgRaw={exportToSvgRaw}
-              exportToSvg={exportToSvg}
-            />
-          </div>
+          <MintButton
+            className="px-1.5 py-4  text-xs h-8 flex items-center justify-center hover:bg-sky-700 active:bg-sky-800 hover:text-white rounded-md transition-all hover:shadow-gray-600 hover:shadow-sm cursor-pointer"
+            exportToSvgRaw={exportToSvgRaw}
+            exportToSvg={exportToSvg}
+          />
         </div>
       </div>
     </div>
