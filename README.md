@@ -12,7 +12,7 @@
 
 ## 📽️ Demo Video
 
-[![Watch Demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+[![Watch the demo](https://img.youtube.com/vi/vqDvmONtIWE/0.jpg)](https://youtu.be/vqDvmONtIWE)
 
 ---
 
@@ -46,7 +46,7 @@
 ### Prerequisites
 
 - Foundry
-- Node.js (v16+ recommended)
+- Node.js
 - MetaMask or any EVM-compatible wallet
 
 ### Local Setup
